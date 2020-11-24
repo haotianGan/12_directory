@@ -3,11 +3,30 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <sys/types.h>
+#include <errno.h>
 
-int main()
+int main(int argc, char **argv)
 {
+    char dir_to_open[1000];
+    if(argc == 1){
+        printf("Please specify a directory to open: \n");
+        scanf("%999s", dir_to_open);
+    }
+    if(argc == 2){
+        strncpy(dir_to_open, argv[1], 999);
+    }
+    if(argc > 2) {
+        printf("Too many inputs!\n");
+        return 0;
+    }
+
     DIR *directory; //typedef struct __dirstream
-    directory = opendir("."); 
+    directory = opendir(dir_to_open); 
+    if(directory == NULL) { //Something went wrong
+        printf("Error: %s called %s\n", strerror(errno), dir_to_open);
+        return 0;
+    }
+
     int size = 0;
     struct dirent *directory_entry;
     directory_entry = readdir(directory); //Open directory
